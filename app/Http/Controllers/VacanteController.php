@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\File;
 
 class VacanteController extends Controller
 {   
-    public function __construct()
-    {
-        $this->middleware(['auth', 'verified']);
-    }
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +19,9 @@ class VacanteController extends Controller
      */
     public function index()
     {
-        return view('vacantes/index');
+        $vacantes = Vacante::where('user_id', auth()->user()->id)->paginate(10);
+
+        return view('vacantes/index')->with('vacantes', $vacantes);
     }
 
     /**
@@ -60,6 +58,19 @@ class VacanteController extends Controller
             'imagen' => 'required',
             'skills' => 'required'
         ]);
+
+        auth()->user()->vacantes()->create([
+            'titulo' => $data['titulo'],
+            'categoria_id' => $data['categoria'],
+            'experiencia_id' => $data['experiencia'],
+            'ubicacion_id' => $data['ubicacion'],
+            'salario_id' => $data['salario'],
+            'descripcion' => $data['descripcion'],
+            'imagen' => $data['imagen'],
+            'skills' => $data['skills']
+        ]);
+
+        return redirect()->action('VacanteController@index');
     }
 
     /**
@@ -70,7 +81,7 @@ class VacanteController extends Controller
      */
     public function show(Vacante $vacante)
     {
-        //
+        return view('vacantes.show')->with('vacante', $vacante);
     }
 
     /**

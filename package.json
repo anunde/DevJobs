@@ -25,5 +25,8 @@
         "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.6.10"
+    },
+    "dependencies": {
+        "lightbox2": "^2.11.3"
     }
 }
