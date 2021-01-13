@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Vacante;
 use App\Candidato;
 use Illuminate\Http\Request;
 
@@ -36,6 +37,31 @@ class CandidatoController extends Controller
     public function store(Request $request)
     {
         //
+        $data = $request->validate([
+            'nombre' => 'required',
+            'email' => 'required|email',
+            'cv' => 'mimes:pdf|max:1000',
+            'vacante_id' => 'required'
+        ]);
+
+        //Almacenar archivo pdf
+
+        if($request->file('cv')){
+            $archivo = $request->file('cv');
+            $nombreArchivo = time().".".$request->file('cv')->extension();
+            $ubicacion = public_path('/storage/cv');
+            $archivo->move($ubicacion, $nombreArchivo);
+
+        $vacante = Vacante::find($data['vacante_id']);
+
+        $vacante->candidatos()->create([
+            'nombre' => $data['nombre'],
+            'email' => $data['email'],
+            'cv' => $nombreArchivo
+        ]);
+        }
+
+        return back()->with('estado', 'Tus datos se enviarón correctamente!');
     }
 
     /**
